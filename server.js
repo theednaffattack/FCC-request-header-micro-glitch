@@ -22,6 +22,9 @@ if (!process.env.DISABLE_XORIGIN) {
   });
 }
 
+// we need this to get the client IP when we're behind a proxy
+app.enable('trust proxy');
+
 app.use('/public', express.static(process.cwd() + '/public'));
 
 app.route('/_api/package.json')
@@ -35,6 +38,29 @@ app.route('/_api/package.json')
   
 app.route('/')
     .get(function(req, res) {
+		  res.sendFile(process.cwd() + '/views/index.html');
+    })
+  
+app.route('/api/1/')
+    .get(function(req, res) {
+  const userAgent = req.headers['user-agent'];
+  const cutFrom = userAgent.indexOf('(');
+  const cutTo = userAgent.indexOf(')') + 1;
+  const userOperatingSystem = userAgent.slice(cutFrom, cutTo);
+  const resObj = {
+    language: req.headers["accept-language"].split(',')[0],
+    ipaddress: req.ip,
+    software: userOperatingSystem,
+  };
+  console.log(JSON.stringify(resObj, null, 2));
+  // IP
+  // LANGUAGE
+  // OPERATING SYSTEM
+  // {
+  //   "ipaddress": "198.27.132.5",
+  //   "language": "en-US",
+  //   "software": "Windows NT 6.1; Win64; x64"
+  // }
 		  res.sendFile(process.cwd() + '/views/index.html');
     })
 
