@@ -44,15 +44,15 @@ app.route('/')
 app.route('/api/1/')
     .get(function(req, res) {
   const userAgent = req.headers['user-agent'];
-  const cutFrom = userAgent.indexOf('(');
-  const cutTo = userAgent.indexOf(')') + 1;
+  const cutFrom = userAgent.indexOf('(') + 1;
+  const cutTo = userAgent.indexOf(')');
   const userOperatingSystem = userAgent.slice(cutFrom, cutTo);
   const resObj = {
     language: req.headers["accept-language"].split(',')[0],
     ipaddress: req.ip,
     software: userOperatingSystem,
   };
-  console.log(JSON.stringify(resObj, null, 2));
+  res.json(resObj);
   // IP
   // LANGUAGE
   // OPERATING SYSTEM
